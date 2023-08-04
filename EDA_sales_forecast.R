@@ -148,6 +148,7 @@ scatter_plot1
 #correlation is not significant 
 
 
+
 #drop 'price_unit' column and setting index
 tsble_itm1_drpd <- tsibble_item1 %>% select(date, total_qty) %>% 
   as_tsibble(index=date)
@@ -241,26 +242,12 @@ fit1_snaive <- snaive(train_item1, h=test_no_item1)
 fit1_mean <- meanf(train_item1, h=test_no_item1) 
 
 
-###RWF
-fit1_rwf <- rwf(train_item1, drift = TRUE, h=test_no_item1)
-
-###ma
-ma_model_1 <- ma(train_item1, order = 1)
-fit1_ma <- forecast(ma_model_1, h=test_no_item1)
-
-###ema
-ema_model_1 <- HoltWinters(train_item1, beta = FALSE, gamma = FALSE)
-# Forecast future values using the EMA model
-fit1_ema <- forecast(ema_model_1, h = test_no_item1)
 
 ###PLOTS
 plot_f1 <- autoplot(ts_item1) +
-  autolayer(fit1_mean, series = 'MEAN', PI = FALSE) +
   autolayer(fit1_snaive, series = 'SNAIVE', PI = FALSE) +
   autolayer(fit1_sarima, series = 'SARIMA', PI = FALSE) +
   autolayer(fit1_arima, series = 'ARIMA', PI = FALSE) +
-  autolayer(fit1_rwf, series = 'RWF', PI = FALSE) +
-  autolayer(fit1_ema, series = 'ema', PI = FALSE) +
   xlab("Year") + ylab("Total_Qty") +
   ggtitle("Forecasts for Item 1 Quantity Sold")
 
@@ -268,12 +255,9 @@ plot_f1
 
 ####Accuracy----
 
-accuracy(fit1_mean, test_item1)[2, c('RMSE', 'MAE')]
 accuracy(fit1_snaive, test_item1)[2, c('RMSE', 'MAE')]
 accuracy(fit1_sarima, test_item1)[2, c('RMSE', 'MAE')]
-accuracy(fit1_rwf, test_item1)[2, c('RMSE', 'MAE')]
 accuracy(fit1_arima, test_item1)[2, c('RMSE', 'MAE')]
-accuracy(fit1_ema, test_item1)[2, c('RMSE', 'MAE')]
 
 ####BEST FORECASTS: 
 checkresiduals(fit1_sarima)
